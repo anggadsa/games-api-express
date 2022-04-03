@@ -28,13 +28,6 @@
         "platform": "PC"
     },
     {
-        "id": 5,
-        "name": "GTA REMASTERED V1",
-        "game_code": "GTARM1",
-        "price": 750001,
-        "platform": "PC"
-    },
-    {
         "id": 6,
         "name": "GTA VICE CITY",
         "game_code": "GTAVCT",

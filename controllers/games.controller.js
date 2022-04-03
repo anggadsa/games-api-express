@@ -93,9 +93,37 @@ const updateGameById = (req, res) => {
     // console.log(index)
 }
 
+const deleteGameById = (req, res) => {
+    let index;
+
+    //get index of games
+    for(let i = 0; i < games.length; i++){
+        if(games[i].id === +req.params.id){
+            index = games[i].id
+            i = games.length -1
+        }
+    }
+    games = games.filter(function(item, i, arr) {
+        return item.id !== index
+    });
+
+    console.log(games)
+    if (!index) throw new Error(`Game dengan id ${req.params.id} tidak ditemukan`)
+    // write into local files named games.json
+    fs.writeFile('./data/games.json', JSON.stringify(games), 'utf-8', (err, data) => {
+        // if (err) throw new Error(err);
+        res.status(200).json({
+            status: 'Success',
+            data: games
+        })
+    })
+
+}
+
 module.exports = {
     getAllGames,
     getGameById,
     createGame,
     updateGameById,
+    deleteGameById,
 };
