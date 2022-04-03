@@ -1,10 +1,7 @@
 require('dotenv').config();
 const express = require(`express`);
-// const req = require('express/lib/request');
-// const res = require('express/lib/response');
 const morgan = require('morgan')
 const games = require(`./data/games.json`);
-const bodyParser= require('body-parser')
 const fs = require('fs');
 const router = require(`./router/games.route`)
 
