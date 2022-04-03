@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "name": "Final Fantasy VII",
+        "game_code": "FFORI",
+        "price": 35000,
+        "platform": "Playstation 1"
+    },
+    {
+        "id": 2,
+        "name": "Final Fantasy VII Remake",
+        "game_code": "FFRMK",
+        "price": 350000,
+        "platform": "Playstation 5"
+    },
+    {
+        "id": 3,
+        "name": "Elden Ring",
+        "game_code": "EERGNG",
+        "price": 700000,
+        "platform": "PC"
+    },
+    {
+        "id": 4,
+        "name": "GTA V ONLINE",
+        "game_code": "GTAVON",
+        "price": 350000,
+        "platform": "PC"
+    },
+    {
+        "id": 5,
+        "name": "GTA REMASTERED V1",
+        "game_code": "GTARM1",
+        "price": 750001,
+        "platform": "PC"
+    },
+    {
+        "id": 6,
+        "name": "GTA VICE CITY",
+        "game_code": "GTAVCT",
+        "price": 50001,
+        "platform": "PC"
+    }
+]

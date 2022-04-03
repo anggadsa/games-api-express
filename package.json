@@ -1,0 +1,26 @@
+{
+  "name": "exercises-1-topic-4",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Angga Dwi Satria",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/anggadsatria/excercises-ch-4.git"
+  },
+  "bugs": {
+    "url": "https://gitlab.com/anggadsatria/excercises-ch-4/issues"
+  },
+  "homepage": "https://gitlab.com/anggadsatria/excercises-ch-4#readme",
+  "description": ""
+}
