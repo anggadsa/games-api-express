@@ -26,12 +26,5 @@
         "game_code": "GTAVON",
         "price": 350000,
         "platform": "PC"
-    },
-    {
-        "id": 6,
-        "name": "GTA VICE CITY",
-        "game_code": "GTAVCT",
-        "price": 50001,
-        "platform": "PC"
     }
 ]

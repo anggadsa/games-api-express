@@ -1,14 +1,22 @@
 let games = require('../data/games.json');
 const fs = require('fs');
+const db = require(`../database/connection`)
 
 //get all games
 const getAllGames = (req, res) => {
+    try{
+        const viewAllGames = db.query(`SELECT * FROM games`)
+    }
+    catch {
+        
+    }
     console.log(`Masuk endpoint games`);
     res.status(200).json({
         status:`sucess`, 
         data: games,
     });
 }
+
 // get specific game id
 const getGameById = (req, res) => {
     console.log(`Masuk endpoint getGameByid`)
@@ -32,6 +40,7 @@ const getGameById = (req, res) => {
         platform: foundGame.platform,
     });
 }
+
 // create new games
 const createGame = (req, res) => {
     const { name, game_code, price, platform } = req.body;
@@ -57,6 +66,7 @@ const createGame = (req, res) => {
         })
     })
 }
+
 // update an existing games
 const updateGameById = (req, res) => {
     const { name, game_code, price, platform } = req.body;
@@ -65,13 +75,15 @@ const updateGameById = (req, res) => {
     //get index of games
     for(let i = 0; i < games.length; i++){
         if(games[i].id === +req.params.id){
-            index = games[i].id
+            index = i
             i = games.length -1
         }
+
     }
-    //update games list on local variables
-    games[index-1] = {
-        id: index,
+   
+    // update games list on local variables
+    games[index] = {
+        id: +req.params.id,
         name: name,
         game_code: game_code,
         price: price,
@@ -84,7 +96,7 @@ const updateGameById = (req, res) => {
         // if (err) throw new Error(err);
         res.status(200).json({
             status: 'Success',
-            data: games[index-1]
+            data: games[index]
         })
     })
 
@@ -93,9 +105,9 @@ const updateGameById = (req, res) => {
     // console.log(index)
 }
 
+//delete games by id
 const deleteGameById = (req, res) => {
     let index;
-
     //get index of games
     for(let i = 0; i < games.length; i++){
         if(games[i].id === +req.params.id){
@@ -113,7 +125,7 @@ const deleteGameById = (req, res) => {
     fs.writeFile('./data/games.json', JSON.stringify(games), 'utf-8', (err, data) => {
         // if (err) throw new Error(err);
         res.status(200).json({
-            status: 'Success',
+            status: `Success delete by id ${index}`,
             data: games
         })
     })
