@@ -1,0 +1,3 @@
+sequelize model:generate --name user_game_biodata --attributes fullName:string,age:integer,gender:string,role:string,user_id:int
+
+sequelize model:generate --name user_game_history --attributes user_id:integer

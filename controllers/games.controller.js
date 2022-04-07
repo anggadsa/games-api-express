@@ -1,230 +1,127 @@
 let games = require('../data/games.json');
 const fs = require('fs');
-const db = require(`../database/connection`)
-const dateString = require(`../database/date`)
+const { user_game } = require('../models');
+const { user_game_biodata } = require(`../models/user_game_biodata`)
+//get all username
 
-//get all games
-const getAllGames = async (req, res) => {
+const getAllUsers = async (req, res) => {
     try{
-        // console.log(req.query.page)
-        // return
+        console.log(`Masuk endpoint getAllUsers`)
         let { page, row } = req.query;
         page = ((req.query.page - 1))
-        const viewAllGames = await db.query(`SELECT * FROM games LIMIT ${row} OFFSET ${page}`)
-            console.log(`Masuk endpoint view all games`);
 
+        const options = {
+            attributes: ['username'], //just viewing username
+            offset: page,
+            limit: row,
+        }
+
+        const allUsers = await user_game.findAll(options);
             res.status(200).json({
-                status:`sucess`, 
-                result :{
-                    rows: viewAllGames.rowCount,
-                    data: viewAllGames.rows
-                }
+                status:`Success`, 
+                result : allUsers
             });
-        //View all games.json
-        // console.log(games)
     }
     catch (error) {
         console.log(error)
     }
 }
 
-// get specific game id
-const getGameById = async (req, res) => {
+// get specific user by id
+const getUserByid = async (req, res) => {
     console.log(`Masuk endpoint getGameByid`)
     // Read from Database
     let id = req.params.id
     try{
-        const viewById = await db.query(`SELECT * FROM games WHERE id = ${id}`);
+        const findUserById = await user_game.findByPk(req.params.id);
         res.status(200).json({
-            status: `Succes`,
-            result: viewById.rows[0]
+            status: `Success`,
+            result: {
+                username: findUserById.username,
+                account_created: findUserById.createdAt
+            }
         });
 
     } catch (error) {
         console.log(error)
     }
-    
-    return // This used to break the code below
-    // END read from database
-
-    // Read From Games.json
-    /**
-    let foundGame;
-    for(let i = 0; i < games.length; i++){
-        if(games[i].id === +req.params.id){
-            // console.log(games[i])
-            foundGame = games[i]
-            i = games.length - 1
-        }
-    
-    }
-    // Uncomment bellow if you want to try read from games.json
-
-    if(!foundGame) throw new Error(`Game dengan id ${req.params.id} tidak ditemukan`)
-    
-    res.status(200).json({
-        status: `Succes`,
-        name: foundGame.name,
-        price: foundGame.price,
-        platform: foundGame.platform,
-    });
-    */
-    // END read From Games.json
-
-
 }
 
-// create new games
-const createGame = async (req, res) => {
-    const { name, game_code, price, platform } = req.body;
+// create new user
+const createUser = async (req, res) => {
+    console.log(`Masuk endpoint createUser`)
+    const { username, password } = req.body;
     // CREATE new games entities to database
     try{
-        const createGames = await db.query(`INSERT INTO
-        games (name, game_code, price, platform, ts)
-        VALUES
-        ('${name}', '${game_code}', ${price}, '${platform}', '${dateString}')`);
-     
+        const insertNewUser = await user_game.create({ 
+            username: username, 
+            password: password,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        });
         res.status(201).json({
-            status: `Success create new games`,
-            result: req.body
+            status: `Success create new user`,
+            result: insertNewUser
         })
     } catch (error){
         console.log(error)
-    }
-    return 
-    // END CREATE new games entities to database
-
-    // CREATE games entities to games.json
-    const gameData = {
-        id: games[games.length - 1].id + 1,
-        name: name,
-        game_code: game_code,
-        price: price,
-        platform: platform
-    }
-
-    //push games local variables with gameData
-    games.push(gameData)
-    console.log(games);
-
-    //write the games local variables to games.json file
-    fs.writeFile('./data/games.json', JSON.stringify(games), 'utf-8', (err, data) =>{
-        if (err) throw new Error(err)
-        res.status(201).json({
-            status: `Sukses Masukin`,
-            data: gameData
+        res.status(400).json({
+            status:`Username already exists`,
+            result: req.body.username
         })
-    })
-    // END create games entities to games.json
-
+    }
 }
 
-// update an existing games
-const updateGameById = async (req, res) => {
-    const { name, game_code, price, platform } = req.body;
-    const id = req.params.id
-
+// update an existing user password
+const updateUser = async (req, res) => {
+    console.log(`Masuk endpoint updateUser`)
+    const { oldPassword, newPassword } = req.body;
+    const { username } = req.query
     try {
-        const updateGames = await db.query(`UPDATE games
-        SET 
-        name = '${name}',
-        game_code = '${game_code}', 
-        price = ${price},
-        platform  = '${platform}',
-        ts = '${dateString}'
-        WHERE id = ${id};
-        `)
-
+        const updatePassword = await user_game.update(
+            { password: newPassword },
+            {
+              where: {
+                password: oldPassword,
+              },
+            }
+        );
         res.status(200).json({
-            status: 'Success Update',
-            result: req.body
+            status: 'Success change password',
+            result: {
+                Username: username
+            }
         })
     } catch (error) {
         console.log(error)
+        
     }
-    return
-    // UPDATE game from games.json
-    let index;
-    //get index of games
-    for(let i = 0; i < games.length; i++){
-        if(games[i].id === +req.params.id){
-            index = i
-            i = games.length -1
-        }
-
-    }
-   
-    // update games list on local variables
-    games[index] = {
-        id: +req.params.id,
-        name: name,
-        game_code: game_code,
-        price: price,
-        platform: platform
-    }
-
-    if (!index) throw new Error(`Game dengan id ${req.params.id} tidak ditemukan`)
-    // write into local files named games.json
-    fs.writeFile('./data/games.json', JSON.stringify(games), 'utf-8', (err, data) => {
-        // if (err) throw new Error(err);
-        res.status(200).json({
-            status: 'Success',
-            data: games[index]
-        })
-    })
-    // END update game from games.json
-    
-    // console.log(games)
-    // console.log(gameData)
-    // console.log(index)
 }
 
 //delete games by id
-const deleteGameById = async (req, res) => {
-    const id = req.params.id
-    // DELETE games data from database
+const deleteUser = async (req, res) => {
+    const { deleteUser } = req.body
+    // DELETE user data from database
+
     try {
-        const deleteGames = await db.query(`DELETE FROM games
-        WHERE id = ${id};`)
+        const deleteByUsername = await user_game.destroy({
+            where: {
+              username: deleteUser
+            }
+        });
+        if(deleteByUsername < 1) res.status(400).send(`Username is not exist`)
         res.status(200).json({
-            status: `Success delete by id ${id}`,
+            status: `Success delete ${deleteUser}`,
         })
     } catch(error) {
         console.log(error.stack)
     }
-    return
-    // END delete data from db
-
-    //DELETE data from games.json
-    let index;
-    //get index of games
-    for(let i = 0; i < games.length; i++){
-        if(games[i].id === +req.params.id){
-            index = games[i].id
-            i = games.length -1
-        }
-    }
-    games = games.filter(function(item, i, arr) {
-        return item.id !== index
-    });
-
-    console.log(games)
-    if (!index) throw new Error(`Game dengan id ${req.params.id} tidak ditemukan`)
-    // write into local files named games.json
-    fs.writeFile('./data/games.json', JSON.stringify(games), 'utf-8', (err, data) => {
-        // if (err) throw new Error(err);
-        res.status(200).json({
-            status: `Success delete by id ${index}`,
-            data: games
-        })
-    })
-    // END delete data from games.json
 }
 
 module.exports = {
-    getAllGames,
-    getGameById,
-    createGame,
-    updateGameById,
-    deleteGameById,
+    getAllUsers,
+    getUserByid,
+    createUser,
+    updateUser,
+    deleteUser,
 };

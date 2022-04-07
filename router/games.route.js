@@ -1,11 +1,13 @@
 const express = require(`express`);
 const router = express.Router();
-const { getAllGames, getGameById, createGame, updateGameById, deleteGameById } = require('../controllers/games.controller');
+const { getAllUsers, getUserByid, createUser, updateUser, deleteUser } = require('../controllers/games.controller');
+const { passwordValidator } = require('../validator/password.validator'); //validate password
+const { userAuth, adminAuth } = require('../validator/user-auth'); //auth for user and admin
 
-router.get('/', getAllGames);
-router.get('/:id', getGameById);
-router.post('/create', createGame);
-router.put('/update/:id', updateGameById);
-router.delete('/delete/:id', deleteGameById);
+router.get('/', getAllUsers);userAuth
+router.get('/:id', getUserByid);
+router.post('/create', createUser);
+router.put('/update/', userAuth, passwordValidator, updateUser);
+router.delete('/delete/', adminAuth, deleteUser);
 
 module.exports = router;
